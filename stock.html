@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Produtos</title>
+  <title>Estoque</title>
   <!-- ---------- Material Symbols ---------- -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/stock.css">
 </head>
 <body>
   <div class="grid-container">
@@ -83,30 +83,34 @@
         <p class="font-weight-bold">PRODUTOS</p>
       </div>
 
-      <!-- Formulário de Cadastro de Produto -->
+      <!-- Formulário de Cadastro no Estoque -->
       <div class="charts-card">
-        <p class="chart-title">Cadastrar Produto</p>
-        <form id="product-form" class="product-form">
-          <label for="product-name">Nome do Produto:</label>
-          <input type="text" id="product-name" name="product-name" placeholder="Geladeira" required>
-          <label for="product-price">Valor do Produto:</label>
-          <input type="text" id="product-price" name="product-price" placeholder="R$567,03" required>
-          <button type="submit" class="btn-primary">Cadastrar</button>
+        <p class="chart-title">Adicionar Produto ao Estoque</p>
+        <form id="stock-form" class="stock-form">
+          <label for="product-select">Produto:</label>
+          <select id="product-select" name="product" required>
+            <!-- Opções adicionadas dinamicamente -->
+          </select>
+          <label for="product-quantity">Quantidade:</label>
+          <input type="number" id="product-quantity" name="quantity" placeholder="10" min="0" required>
+          <button type="submit" class="btn-primary">Adicionar</button>
         </form>
       </div>
 
-      <!-- Lista de Produtos -->
+      <!-- Lista de Produtos no Estoque -->
       <div class="charts-card">
-        <p class="chart-title">Lista de Produtos</p>
-        <table class="product-table">
+        <p class="chart-title">Estoque atual</p>
+        <table class="stock-table">
           <thead>
             <tr>
               <th>Nome do Produto</th>
-              <th>Valor</th>
+              <th>Valor Unitário</th>
+              <th>Quantidade</th>
+              <th>Status</th>
               <th>Ações</th>
             </tr>
           </thead>
-          <tbody id="product-list">
+          <tbody id="stock-list">
             <!-- Produtos serão adicionados dinamicamente aqui -->
           </tbody>
         </table>
@@ -117,6 +121,6 @@
   </div>
 
   <!-- ---------- SCRIPTS ---------- -->
-  <script src="js/products.js"></script>
+  <script src="js/stock.js"></script>
 </body>
 </html>
