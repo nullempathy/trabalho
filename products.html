@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos</title>
+  <!-- ---------- Material Symbols ---------- -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  <link rel="stylesheet" href="css/products.css">
+</head>
+<body>
+  <div class="grid-container">
+    <!-- ---------- HEADER ---------- -->
+    <header class="header">
+      <div class="menu-icon" onclick="openSidebar()">
+        <span class="material-symbols-outlined">menu</span>
+      </div>
+      <div class="header-left">
+        <span class="material-symbols-outlined">search</span>
+      </div>
+      <div class="header-right">
+        <span class="material-symbols-outlined">notifications</span>
+        <span class="material-symbols-outlined">mail</span>
+        <span class="material-symbols-outlined">account_circle</span>
+      </div>
+    </header>
+    <!-- ---------- END HEADER ---------- -->
+
+
+    <!-- ---------- SIDEBAR ---------- -->
+    <aside id="sidebar">
+      <div class="sidebar-title">
+        <div class="sidebar-brand">
+          <span class="material-symbols-outlined">inventory</span> Gab Refrigeramentos
+          <span class="material-symbols-outlined" onclick="closeSidebar()">close</span>
+        </div>
+      </div>
+
+      <ul class="sidebar-list">
+        <li class="sidebar-list-item">
+          <span class="material-symbols-outlined">dashboard</span> Painel
+        </li>
+        <li class="sidebar-list-item">
+          <span class="material-symbols-outlined">inventory_2</span> Produtos
+        </li>
+        <li class="sidebar-list-item">
+          <span class="material-symbols-outlined">fact_check</span> Estoque
+        </li>
+        <li class="sidebar-list-item">
+          <span class="material-symbols-outlined">add_shopping_cart</span> Compras
+        </li>
+        <li class="sidebar-list-item">
+          <span class="material-symbols-outlined">shopping_cart</span> Vendas
+        </li>
+        <li class="sidebar-list-item">
+          <span class="material-symbols-outlined">poll</span> Relatórios
+        </li>
+        <li class="sidebar-list-item">
+          <span class="material-symbols-outlined">settings</span> Configurações
+        </li>
+      </ul>
+    </aside>
+    <!-- ---------- END SIDEBAR ---------- -->
+
+
+    <!-- ---------- MAIN ---------- -->
+    <main class="main-container">
+      <div class="main-title">
+        <p class="font-weight-bold">PRODUTOS</p>
+      </div>
+
+      <!-- Formulário de Cadastro de Produto -->
+      <div class="charts-card">
+        <p class="chart-title">Cadastrar Produto</p>
+        <form id="product-form" class="product-form">
+          <label for="product-name">Nome do Produto:</label>
+          <input type="text" id="product-name" name="product-name" placeholder="Geladeira" required>
+          <label for="product-price">Valor do Produto:</label>
+          <input type="text" id="product-price" name="product-price" placeholder="R$567,03" required>
+          <button type="submit" class="btn-primary">Cadastrar</button>
+        </form>
+      </div>
+
+      <!-- Lista de Produtos -->
+      <div class="charts-card">
+        <p class="chart-title">Lista de Produtos</p>
+        <table class="product-table">
+          <thead>
+            <tr>
+              <th>Nome do Produto</th>
+              <th>Valor</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="product-list">
+            <!-- Produtos serão adicionados dinamicamente aqui -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <!-- ---------- END MAIN ---------- -->
+
+  </div>
+
+  <!-- ---------- SCRIPTS ---------- -->
+  <script src="js/products.js"></script>
+</body>
+</html>
