@@ -155,6 +155,14 @@ body {
   position: absolute;
   z-index: 10;
 }
+
+.button-close-closed {
+  display: none;
+}
+
+.button-close-open {
+  display: inline block;
+}
 /* ---------- END SIDEBAR ---------- */
 
 

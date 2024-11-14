@@ -2,10 +2,13 @@
 
 let sidebarOpen = false;
 let sidebar = document.getElementById("sidebar");
+let buttonClose = document.getElementById("button-close");
 
 function openSidebar() {
   if(!sidebarOpen) {
     sidebar.classList.add("sidebar-responsive");
+    buttonClose.classList.remove("button-close-closed");
+    buttonClose.classList.add("button-close-open");
     sidebarOpen = true;
   }
 }
@@ -13,6 +16,8 @@ function openSidebar() {
 function closeSidebar() {
   if(sidebarOpen) {
     sidebar.classList.remove("sidebar-responsive");
+    buttonClose.classList.remove("button-close-open");
+    buttonClose.classList.add("button-close-closed");
     sidebarOpen = false;
   }
 }

@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Produtos</title>
+  <title>Compras</title>
   <!-- ---------- Material Symbols ---------- -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/purchases.css">
 </head>
 <body>
   <div class="grid-container">
@@ -25,7 +25,6 @@
       </div>
     </header>
     <!-- ---------- END HEADER ---------- -->
-
 
     <!-- ---------- SIDEBAR ---------- -->
     <aside id="sidebar">
@@ -76,38 +75,71 @@
     </aside>
     <!-- ---------- END SIDEBAR ---------- -->
 
-
     <!-- ---------- MAIN ---------- -->
     <main class="main-container">
       <div class="main-title">
-        <p class="font-weight-bold">PRODUTOS</p>
+        <p class="font-weight-bold">COMPRAS</p>
+        <div class="filter-container">
+          <label for="filter-year">Ano:</label>
+          <select id="filter-year">
+            <!-- Opções de ano serão adicionadas dinamicamente via JS -->
+          </select>
+      
+          <label for="filter-month">Mês:</label>
+          <select id="filter-month">
+            <option value="01">Janeiro</option>
+            <option value="02">Fevereiro</option>
+            <option value="03">Março</option>
+            <option value="04">Abril</option>
+            <option value="05">Maio</option>
+            <option value="06">Junho</option>
+            <option value="07">Julho</option>
+            <option value="08">Agosto</option>
+            <option value="09">Setembro</option>
+            <option value="10">Outubro</option>
+            <option value="11">Novembro</option>
+            <option value="12">Dezembro</option>
+          </select>
+      
+          <button id="filter-button" class="btn-primary">Filtrar</button>
+        </div>
       </div>
 
-      <!-- Formulário de Cadastro de Produto -->
+      <!-- Formulário de Cadastro de Compra -->
       <div class="charts-card">
-        <p class="chart-title">Cadastrar Produto</p>
-        <form id="product-form" class="product-form">
-          <label for="product-name">Nome do Produto:</label>
-          <input type="text" id="product-name" name="product-name" placeholder="Geladeira" required>
-          <label for="product-price">Valor do Produto:</label>
-          <input type="text" id="product-price" name="product-price" placeholder="R$567,03" required>
-          <button type="submit" class="btn-primary">Cadastrar</button>
+        <p class="chart-title">Registrar Compra</p>
+        <form id="purchase-form" class="purchase-form">
+          <label for="purchase-name">Nome do Produto:</label>
+          <input type="text" id="purchase-name" name="purchase-name" placeholder="Geladeira" required>
+
+          <label for="purchase-quantity">Quantidade:</label>
+          <input type="number" id="purchase-quantity" name="purchase-quantity" min="1" required>
+
+          <label for="unit-price">Valor Unitário:</label>
+          <input type="text" id="unit-price" name="unit-price" placeholder="R$567,03" required>
+
+          <label for="purchase-date">Data da Compra:</label>
+          <input type="date" id="purchase-date" name="purchase-date" required>
+
+          <button type="submit" class="btn-primary">Registrar</button>
         </form>
       </div>
 
-      <!-- Lista de Produtos -->
+      <!-- Lista de Compras -->
       <div class="charts-card">
-        <p class="chart-title">Lista de Produtos</p>
-        <table class="product-table">
+        <p class="chart-title">Lista de Compras</p>
+        <table class="purchase-table">
           <thead>
             <tr>
+              <th>Data</th>
               <th>Nome do Produto</th>
-              <th>Valor</th>
-              <th>Ações</th>
+              <th>Quantidade</th>
+              <th>Valor Unitário</th>
+              <th>Valor Total</th>
             </tr>
           </thead>
-          <tbody id="product-list">
-            <!-- Produtos serão adicionados dinamicamente aqui -->
+          <tbody id="purchase-list">
+            <!-- Compras serão adicionadas dinamicamente aqui -->
           </tbody>
         </table>
       </div>
@@ -117,6 +149,6 @@
   </div>
 
   <!-- ---------- SCRIPTS ---------- -->
-  <script src="js/products.js"></script>
+  <script src="js/purchases.js"></script>
 </body>
 </html>
