@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadProducts();
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const productName = document.getElementById("product-name").value;
@@ -12,65 +12,111 @@ document.addEventListener("DOMContentLoaded", () => {
       document.getElementById("product-price").value.replace(/[^\d,]/g, '').replace(',', '.')
     ).toFixed(2);
 
-    addProductToList(productName, productPrice);
-    saveProducts();
 
-    form.reset();
+    try {
+      const response = await fetch("http://localhost:3000/create/product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: productName, price: productPrice }),
+      });
+
+      if (response.ok) {
+        const newProduct = await response.json();
+        addProductToList(newProduct.id, newProduct.name, newProduct.price); // Atualiza a tabela
+        form.reset();
+      } else {
+        console.error("Erro ao criar produto:", await response.json());
+      }
+
+    } catch (error) {
+      console.error("Erro ao conectar com o servidor:", error);
+    }
   });
 
-  function addProductToList(name, price) {
+  async function loadProducts() {
+    try {
+      const response = await fetch("http://localhost:3000/read/product");
+      if (response.ok) {
+        const products = await response.json();
+        products.forEach(product => {
+          addProductToList(product.id, product.name, product.price);
+        });
+      } else {
+        console.error("Erro ao carregar produtos:", await response.json());
+      }
+    } catch (error) {
+      console.error("Erro ao conectar com o servidor:", error);
+    }
+  }
+
+  function addProductToList(id, name, price) {
     const row = document.createElement("tr");
+    row.setAttribute("data-id", id); // Armazena o ID do produto
 
     row.innerHTML = `
       <td>${name}</td>
       <td>R$ ${formatPrice(price)}</td>
       <td>
         <button class="edit-btn">Editar</button>
-        <button class="delete-btn">Excluir</button>
       </td>
     `;
 
-    row.querySelector(".edit-btn").addEventListener("click", () => editProduct(row, name, price));
-    row.querySelector(".delete-btn").addEventListener("click", () => deleteProduct(row));
+    console.log(name);
+    row.querySelector(".edit-btn").addEventListener("click", () => editProduct(row, id, name, price));
 
     productList.appendChild(row);
   }
 
-  function editProduct(row, name, price) {
+  function editProduct(row, id, name, price) {
     // Substituir as células por campos de input
+    console.log("name", name);
+    console.log("price", price);
     row.innerHTML = `
-      <td><input type="text" value="${name}" class="edit-name"></td>
+      <td>${name}</td>
       <td><input type="text" value="${formatPrice(price)}" class="edit-price"></td>
       <td>
         <button class="save-btn">Salvar</button>
         <button class="cancel-btn">Cancelar</button>
       </td>
     `;
-
+  
     // Função para salvar as alterações
-    row.querySelector(".save-btn").addEventListener("click", () => {
-      const updatedName = row.querySelector(".edit-name").value;
+    row.querySelector(".save-btn").addEventListener("click", async () => {
       const updatedPrice = parseFloat(
         row.querySelector(".edit-price").value.replace(/[^\d,]/g, '').replace(',', '.')
       ).toFixed(2);
-
-      // Limpar a formatação do preço
-      row.innerHTML = `
-        <td>${updatedName}</td>
-        <td>R$ ${formatPrice(updatedPrice)}</td>
-        <td>
-          <button class="edit-btn">Editar</button>
-          <button class="delete-btn">Excluir</button>
-        </td>
-      `;
-
-      // Re-adicionar os event listeners aos botões
-      row.querySelector(".edit-btn").addEventListener("click", () => editProduct(row, updatedName, updatedPrice));
-      row.querySelector(".delete-btn").addEventListener("click", () => deleteProduct(row));
-
-      saveProducts();
+  
+      console.log("updatedPrice", updatedPrice);
+      try {
+        // Enviar os dados atualizados ao servidor
+        const response = await fetch("http://localhost:3000/update/product", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, price: updatedPrice }),
+        });
+  
+        if (response.ok) {
+          const updatedProduct = await response.json();
+          console.log(updatedProduct);
+          // Atualizar a tabela com os dados salvos
+          row.innerHTML = `
+            <td>${updatedProduct.name}</td>
+            <td>R$ ${formatPrice(updatedProduct.price)}</td>
+            <td>
+              <button class="edit-btn">Editar</button>
+            </td>
+          `;
+  
+          // Re-adicionar o event listener ao botão de editar
+          row.querySelector(".edit-btn").addEventListener("click", () => editProduct(row, id, updatedProduct.name, updatedProduct.price));
+        } else {
+          console.error("Erro ao atualizar produto:", await response.json());
+        }
+      } catch (error) {
+        console.error("Erro ao conectar com o servidor:", error);
+      }
     });
-
+  
     // Função para cancelar a edição (restaurar os valores originais)
     row.querySelector(".cancel-btn").addEventListener("click", () => {
       row.innerHTML = `
@@ -78,43 +124,16 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>R$ ${formatPrice(price)}</td>
         <td>
           <button class="edit-btn">Editar</button>
-          <button class="delete-btn">Excluir</button>
         </td>
       `;
-      row.querySelector(".edit-btn").addEventListener("click", () => editProduct(row, name, price));
-      row.querySelector(".delete-btn").addEventListener("click", () => deleteProduct(row));
-    });
-  }
-
-  function deleteProduct(row) {
-    row.remove();
-    saveProducts(); // Salvar as alterações no localStorage após exclusão
-  }
-
-  function saveProducts() {
-    const rows = document.querySelectorAll("#product-list tr");
-    const products = [];
-
-    rows.forEach(row => {
-      const name = row.querySelector("td:nth-child(1)").textContent;
-      const price = row.querySelector("td:nth-child(2)").textContent.replace('R$ ', '').replace(',', '.');
-      products.push({ name, price });
-    });
-
-    localStorage.setItem("products", JSON.stringify(products)); // Salva os produtos no localStorage
-  }
-
-  function loadProducts() {
-    const products = JSON.parse(localStorage.getItem("products")) || [];
-
-    products.forEach(product => {
-      addProductToList(product.name, product.price);
+      row.querySelector(".edit-btn").addEventListener("click", () => editProduct(row, id, name, price));
     });
   }
 
   function formatPrice(price) {
     return parseFloat(price).toFixed(2).replace('.', ',');
   }
+  
 });
 
 

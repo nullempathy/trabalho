@@ -3,43 +3,83 @@ document.addEventListener("DOMContentLoaded", () => {
   const sellList = document.getElementById("sell-list");
   const filterYear = document.getElementById("filter-year");
   const filterMonth = document.getElementById("filter-month");
+  const filterDay = document.getElementById("filter-day");
+  const stockSelect = document.getElementById("stock-select");
   const filterButton = document.getElementById("filter-button");
 
   populateYearFilter();
   populateMonthFilter();
+  populateStockSelect();
+  populateDayFilter(filterYear.value, filterMonth.value);
+
   loadSellsFromTheCurrentMonthAndYear(filterYear.value, filterMonth.value);
 
-  form.addEventListener("submit", (e) => {
+  filterYear.addEventListener("change", () => {
+    populateDayFilter(filterYear.value, filterMonth.value);
+  });
+
+  filterMonth.addEventListener("change", () => {
+    populateDayFilter(filterYear.value, filterMonth.value);
+  });
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("sell-name").value;
+    const stockId = document.getElementById("stock-select").value;
     const quantity = parseInt(document.getElementById("sell-quantity").value);
     const unitPrice = parseFloat(
       document.getElementById("unit-price").value.replace(/[^\d,]/g, '').replace(',', '.')
     ).toFixed(2);
     const date = document.getElementById("sell-date").value;
-    console.log("date", date);
 
     const totalPrice = (quantity * unitPrice).toFixed(2);
 
-    let currentMonthAndYear = filterSellsOngoing(date);
-    if (currentMonthAndYear) {
-      addSellToList(date, name, quantity, unitPrice, totalPrice);
+    try {
+      const sellCreated = await createSell(stockId, quantity, unitPrice, date);
+
+      if (filterSellsOngoing(date)) {
+        addSellToList(sellCreated.stock.product.name, quantity, unitPrice, date, totalPrice);
+      }
+      form.reset();
+    } catch (error) {
+      console.error("Erro ao salvar venda:", error);
+      alert("Erro ao salvar venda. Tente novamente.");
     }
-    saveSells(date, name, quantity, unitPrice, totalPrice);
-    form.reset();
   });
+
+  async function populateStockSelect() {
+    try {
+      const response = await fetch("http://localhost:3000/read/stock");
+      if (response.ok) {
+        const stocks = await response.json();
+        stockSelect.innerHTML = ""; // Limpa o select antes de preencher
+        stocks.forEach((stock) => {
+          console.log("stock", stock);
+          const option = document.createElement("option");
+          option.value = stock.id;
+          option.textContent = stock.product.name;
+          stockSelect.appendChild(option);
+        });
+      } else {
+        console.error("Erro ao carregar produtos em estoque:", await response.json());
+      }
+    } catch (error) {
+      console.error("Erro ao conectar com o servidor:", error);
+    }
+  }
+
 
   filterButton.addEventListener("click", () => {
     const selectedYear = filterYear.value;
-    const selectedMonth = filterMonth.value;
-    console.log("Filtro selecionado - Ano:", selectedYear, "Mês:", selectedMonth);
-    filterSells(selectedYear, selectedMonth);
+    const selectedMonth = filterMonth.value !== "all" ? filterMonth.value : null;
+    const selectedDay = filterDay.value !== "all" ? filterDay.value : null;
+
+    filterSells(selectedYear, selectedMonth, selectedDay);
   });
 
   function populateYearFilter() {
     const currentYear = new Date().getFullYear();
-    for (let year = currentYear - 10; year <= currentYear; year++) {
+    for (let year = currentYear - 30; year <= currentYear; year++) {
       const option = document.createElement("option");
       option.value = year;
       option.textContent = year;
@@ -50,45 +90,81 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function populateMonthFilter() {
     const currentMonth = new Date().getMonth() + 1; // Janeiro é 0
-    filterMonth.value = currentMonth.toString().padStart(2, '0');
+    const allOption = document.createElement("option");
+    allOption.value = "all";
+    allOption.textContent = "Todos os meses";
+    filterMonth.insertBefore(allOption, filterMonth.firstChild);
+
+    filterMonth.value = currentMonth.toString().padStart(2, "0");
   }
 
-  function filterSells(year, month) {
-    let sells = JSON.parse(localStorage.getItem("sells")) || [];
-    // console.log("sells", sells);
-    const filtered = sells.filter(sell => {
-      // console.log("sell.date", sell.date);
-      const [y, m, d] = sell.date.split("-");
-      // console.log(`Analisando compra: ${sell.date} - Ano: ${y}, Mês: ${m}`);
-      return y === year && m === month;
-    });
+  function populateDayFilter(year, month) {
+    filterDay.innerHTML = '<option value="all">Todos os dias</option>'; // Limpa e adiciona opção padrão
+    if (month === "all") return;
 
-    sellList.innerHTML = "";
-    // console.log("Compras filtradas:", filtered);
-    filtered.forEach(sell => {
-      addSellToList(sell.date, sell.name, sell.quantity, sell.unitPrice, sell.totalPrice);
-    });
+    const daysInMonth = new Date(year, month, 0).getDate(); // Obtém o número de dias no mês
+    for (let day = 1; day <= daysInMonth; day++) {
+      const option = document.createElement("option");
+      option.value = day.toString().padStart(2, "0");
+      option.textContent = day;
+      filterDay.appendChild(option);
+    }
+  }
+
+  // Filtro flexível por Ano/Mês/Dia
+  async function filterSells(year, month, day) {
+    try {
+      const sells = await getSellsByDate(year, month, day);
+      sellList.innerHTML = "";
+
+      console.log("sells", sells);
+
+      sells.forEach((sell) => {
+        console.log("sell", sell);
+        addSellToList(
+          sell.stock.product.name,
+          sell.quantity,
+          sell.price,
+          sell.sellDate,
+          (sell.quantity * sell.price).toFixed(2)
+        );
+      });
+    } catch (error) {
+      console.error("Erro ao filtrar vendas:", error);
+      alert("Erro ao filtrar vendas. Tente novamente.");
+    }
   }
 
   function filterSellsOngoing(date) {
     const selectedYear = filterYear.value;
     const selectedMonth = filterMonth.value;
+    const selectedDay = filterDay.value;
     const [y, m, d] = date.split("-");
-    if (y === selectedYear && m === selectedMonth) {
+    if (y === selectedYear && (selectedMonth === "all" || m === selectedMonth) && (selectedDay === "all" || d === selectedDay)) {
       return true;
     }
     return false;
   }
 
-  function addSellToList(date, name, quantity, unitPrice, totalPrice) {
-    const row = document.createElement("tr");
+  async function loadSellsFromTheCurrentMonthAndYear(year, month) {
+    await filterSells(year, month);
+  }
 
-    const [year, month, day] = date.split("-");
+  function addSellToList(productName, quantity, unitPrice, date, totalPrice) {
+    // Remove o horário da data, mantendo apenas o formato YYYY-MM-DD
+    const [year, month, day] = date.split("T")[0].split("-");
     const formattedDate = `${day}/${month}/${year}`;
 
+    console.log("productName: ", productName);
+    console.log("quantity: ", quantity);
+    console.log("unitPrice: ", unitPrice);
+    console.log("date: ", date);
+    console.log("totalPrice: ", totalPrice);
+
+    const row = document.createElement("tr");
     row.innerHTML = `
       <td>${formattedDate}</td>
-      <td>${name}</td>
+      <td>${productName}</td>
       <td>${quantity}</td>
       <td>R$ ${formatPrice(unitPrice)}</td>
       <td>R$ ${formatPrice(totalPrice)}</td>
@@ -97,20 +173,47 @@ document.addEventListener("DOMContentLoaded", () => {
     sellList.appendChild(row);
   }
 
-  function saveSells(date, name, quantity, unitPrice, totalPrice) {
-    let sells = JSON.parse(localStorage.getItem("sells")) || [];
-    let newsell = { date, name, quantity, unitPrice, totalPrice }
-    sells.push(newsell);
-    localStorage.setItem("sells", JSON.stringify(sells));
-  }
-
-  function loadSellsFromTheCurrentMonthAndYear(year, month) {
-    filterSells(year, month);
-  }
-
   function formatPrice(price) {
     return parseFloat(price).toFixed(2).replace('.', ',');
   }
+
+  // API Functions
+  async function createSell(stockId, quantity, unitPrice, date) {
+    console.log(`stockId: ${stockId}, quantity: ${quantity}, unitPrice: ${unitPrice}, date: ${date}`);
+    const response = await fetch("http://127.0.0.1:3000/create/sell", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        stockId,
+        quantity,
+        unitPrice: parseFloat(unitPrice),
+        sellDate: date,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.error(`Erro (${response.status}):`, errorMessage);
+      throw new Error("Erro ao criar venda.");
+    }
+
+    return await response.json();
+  }
+
+  async function getSellsByDate(year, month, day) {
+    const queryParams = new URLSearchParams({
+      year,
+      ...(month && { month }),
+      ...(day && { day }),
+    }).toString();
+
+    const response = await fetch(`http://127.0.0.1:3000/read/sell?${queryParams}`, { method: "GET" });
+    if (!response.ok) throw new Error("Erro ao buscar vendas.");
+    return await response.json();
+  }
+
 });
 
 // Formatação ao digitar o valor unitário
@@ -120,7 +223,6 @@ document.getElementById('unit-price').addEventListener('input', function(e) {
   value = 'R$' + value;
   e.target.value = value;
 });
-
 
 // SIDEBAR TOGGLE
 

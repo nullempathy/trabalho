@@ -169,6 +169,13 @@ body {
   align-items: center;
 }
 
+select {
+  padding: 0.2rem 0.2rem 0.2rem 1rem;
+  font-size: 1.6rem;
+  border: 0.1rem solid #d2d2d3;
+  border-radius: 0.5rem;
+}
+
 .charts {
   display: grid;
   grid-template-columns: 1fr 1fr;

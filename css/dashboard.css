@@ -164,6 +164,19 @@ body {
   font-size: 2rem;
 }
 
+.filter-container {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+select {
+  padding: 0.2rem 0.2rem 0.2rem 1rem;
+  font-size: 1.6rem;
+  border: 0.1rem solid #d2d2d3;
+  border-radius: 0.5rem;
+}
+
 .main-cards {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -232,6 +245,16 @@ body {
   -webkit-column-break-inside: avoid;
   border: 0.1rem solid #d2d2d3;
   box-shadow: 0rem 0.6rem 0.7rem -0.4rem rgba(0, 0, 0, 0.2); 
+}
+
+.btn-primary {
+  padding: 0.8rem;
+  font-size: 1.6rem;
+  color: #fff;
+  background-color: #246dec;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
 }
 
 .chart-title {

@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vendas</title>
-  <!-- ---------- Material Symbols ---------- -->
+  <title>Faturamento</title>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-  <link rel="stylesheet" href="css/sells.css">
+  <link rel="stylesheet" href="css/reports.css">
 </head>
 <body>
   <div class="grid-container">
-    <!-- ---------- HEADER ---------- -->
     <header class="header">
       <div class="menu-icon" onclick="openSidebar()">
         <span class="material-symbols-outlined">menu</span>
@@ -24,7 +22,6 @@
         <span class="material-symbols-outlined">account_circle</span>
       </div>
     </header>
-    <!-- ---------- END HEADER ---------- -->
 
     <!-- ---------- SIDEBAR ---------- -->
     <aside id="sidebar">
@@ -75,10 +72,9 @@
     </aside>
     <!-- ---------- END SIDEBAR ---------- -->
 
-    <!-- ---------- MAIN ---------- -->
     <main class="main-container">
       <div class="main-title">
-        <p class="font-weight-bold">VENDAS</p>
+        <p class="font-weight-bold">Faturamento</p>
         <div class="filter-container">
           <label for="filter-year">Ano:</label>
           <select id="filter-year">
@@ -100,62 +96,48 @@
             <option value="11">Novembro</option>
             <option value="12">Dezembro</option>
           </select>
-
-          <select id="filter-day">
-            <option value="">Todos os dias</option>
-            <!-- Aqui serão preenchidos os dias dinamicamente -->
-          </select>
       
           <button id="filter-button" class="btn-primary">Filtrar</button>
         </div>
       </div>
 
-      <!-- Formulário de Cadastro de Venda -->
-      <div class="charts-card">
-        <p class="chart-title">Registrar Venda</p>
-        <form id="sell-form" class="sell-form">
-          <label for="stock-select">Produto:</label>
-          <select id="stock-select" name="stock" required>
-            <!-- Opções adicionadas dinamicamente -->
-          </select>
+      <div class="main-cards">
+        <div class="card">
+          <div class="card-inner">
+            <p class="text-primary">Receita Bruta</p>
+            <span class="material-symbols-outlined text-blue">monetization_on</span>
+          </div>
+          <span class="text-primary font-weight-bold" id="receita-bruta">R$ 0,00</span>
+        </div>
 
-          <label for="sell-quantity">Quantidade:</label>
-          <input type="number" id="sell-quantity" name="sell-quantity" min="1" required>
+        <div class="card">
+          <div class="card-inner">
+            <p class="text-primary">Custo dos Produtos Vendidos (CPV)</p>
+            <span class="material-symbols-outlined text-orange">shopping_basket</span>
+          </div>
+          <span class="text-primary font-weight-bold" id="cpv">R$ 0,00</span>
+        </div>
 
-          <label for="unit-price">Valor Unitário:</label>
-          <input type="text" id="unit-price" name="unit-price" placeholder="R$954,99" required>
+        <div class="card">
+          <div class="card-inner">
+            <p class="text-primary">Lucro Bruto</p>
+            <span class="material-symbols-outlined text-green">attach_money</span>
+          </div>
+          <span class="text-primary font-weight-bold" id="lucro-bruto">R$ 0,00</span>
+        </div>
 
-          <label for="sell-date">Data da Venda:</label>
-          <input type="date" id="sell-date" name="sell-date" required>
+        <div class="card">
+          <div class="card-inner">
+            <p class="text-primary">Valor Total do Estoque</p>
+            <span class="material-symbols-outlined text-red">analytics</span>
+          </div>
+          <span class="text-primary font-weight-bold" id="valor-total-do-estoque">R$ 0,00</span>
+        </div>
 
-          <button type="submit" class="btn-primary">Registrar</button>
-        </form>
-      </div>
-
-      <!-- Lista de Vendas -->
-      <div class="charts-card">
-        <p class="chart-title">Lista de Vendas</p>
-        <table class="sell-table">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Nome do Produto</th>
-              <th>Quantidade</th>
-              <th>Valor Unitário</th>
-              <th>Valor Total</th>
-            </tr>
-          </thead>
-          <tbody id="sell-list">
-            <!-- Vendas serão adicionadas dinamicamente aqui -->
-          </tbody>
-        </table>
       </div>
     </main>
-    <!-- ---------- END MAIN ---------- -->
-
   </div>
 
-  <!-- ---------- SCRIPTS ---------- -->
-  <script src="js/sells.js"></script>
+  <script src="js/reports.js"></script>
 </body>
 </html>
