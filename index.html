@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin</title>
+  <title>Painel</title>
     <!-- ---------- Material Symbols ---------- -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
   <link rel="stylesheet" href="css/dashboard.css">
@@ -15,14 +15,6 @@
       <div class="menu-icon" onclick="openSidebar()">
         <span class="material-symbols-outlined">menu</span>
       </div>
-      <div class="header-left">
-        <span class="material-symbols-outlined">search</span>
-      </div>
-      <div class="header-right">
-        <span class="material-symbols-outlined">notifications</span>
-        <span class="material-symbols-outlined">mail</span>
-        <span class="material-symbols-outlined">account_circle</span>
-      </div>
     </header>
     <!-- ---------- END HEADER ---------- -->
 
@@ -31,20 +23,15 @@
     <aside id="sidebar">
       <div class="sidebar-title">
         <div class="sidebar-brand">
-          <span class="material-symbols-outlined">inventory</span> Gab Refrigeramentos
+          <img src="./assets/logo-finstock.png" class="logo" alt="logo finstock">
           <span id="button-close" class="material-symbols-outlined" onclick="closeSidebar()">close</span>
         </div>
       </div>
 
       <ul class="sidebar-list">
         <li class="sidebar-list-item">
-          <a href="dashboard.html">
+          <a href="index.html">
             <span class="material-symbols-outlined">dashboard</span> Painel
-          </a>
-        </li>
-        <li class="sidebar-list-item">
-          <a href="products.html">
-            <span class="material-symbols-outlined">inventory_2</span> Produtos
           </a>
         </li>
         <li class="sidebar-list-item">
@@ -68,8 +55,8 @@
           </a>
         </li>
         <li class="sidebar-list-item">
-          <a href="settings.html">
-            <span class="material-symbols-outlined">settings</span> Configurações
+          <a href="https://rastreamento.correios.com.br/">
+            <span class="material-symbols-outlined">map</span> Rastreio
           </a>
         </li>
       </ul>
@@ -87,20 +74,9 @@
             <!-- Opções de ano serão adicionadas dinamicamente via JS -->
           </select>
       
-          <label for="filter-month">Mês:</label>
-          <select id="filter-month">
-            <option value="01">Janeiro</option>
-            <option value="02">Fevereiro</option>
-            <option value="03">Março</option>
-            <option value="04">Abril</option>
-            <option value="05">Maio</option>
-            <option value="06">Junho</option>
-            <option value="07">Julho</option>
-            <option value="08">Agosto</option>
-            <option value="09">Setembro</option>
-            <option value="10">Outubro</option>
-            <option value="11">Novembro</option>
-            <option value="12">Dezembro</option>
+          <label for="filter-semester">Semestre:</label>
+          <select id="filter-semester">
+            <!-- Opções de semestres serão adicionadas dinamicamente via JS -->
           </select>
       
           <button id="filter-button" class="btn-primary">Filtrar</button>
@@ -115,14 +91,6 @@
             <span class="material-symbols-outlined text-blue">inventory_2</span>
           </div>
           <span class="text-primary font-weight-bold" id="stock">189 UNIDADES</span>
-        </div>
-
-        <div class="card">
-          <div class="card-inner">
-            <p class="text-primary">COMPRAS</p>
-            <span class="material-symbols-outlined text-orange">add_shopping_cart</span>
-          </div>
-          <span class="text-primary font-weight-bold" id="purchases">75 COMPRAS</span>
         </div>
 
         <div class="card">

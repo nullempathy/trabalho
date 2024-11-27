@@ -33,10 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalPrice = (quantity * unitPrice).toFixed(2);
 
     try {
-      await createPurchase(name, quantity, unitPrice, date);
+      const dataPurchase = await createPurchase(name, quantity, unitPrice, date);
+      console.log("dataPurchase", dataPurchase);
+      await createStock(dataPurchase.id, quantity);
 
       if (filterPurchasesOngoing(date)) {
-        addPurchaseToList(name, quantity, unitPrice, date, totalPrice);
+        addPurchaseToList(dataPurchase.id, name, quantity, unitPrice, date, totalPrice);
       }
       form.reset();
     } catch (error) {
@@ -106,6 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
       purchases.forEach((purchase) => {
         console.log("purchase", purchase);
         addPurchaseToList(
+          purchase.id,
           purchase.productName,
           purchase.quantity,
           purchase.price,
@@ -134,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
     await filterPurchases(year, month);
   }
 
-  function addPurchaseToList(name, quantity, unitPrice, date, totalPrice) {
+  function addPurchaseToList(purchaseId, name, quantity, unitPrice, date, totalPrice) {
     // Remove o horário da data, mantendo apenas o formato YYYY-MM-DD
     const [year, month, day] = date.split("T")[0].split("-");
 
@@ -147,9 +150,100 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>${quantity}</td>
       <td>R$ ${formatPrice(unitPrice)}</td>
       <td>R$ ${formatPrice(totalPrice)}</td>
+      <td>
+        <button class="edit-btn">Editar</button>
+      </td>
     `;
 
+    row.querySelector(".edit-btn").addEventListener("click", () => editPurchase(row, purchaseId, name, quantity, unitPrice, formattedDate, totalPrice));
     purchaseList.appendChild(row);
+  }
+
+  async function editPurchase(row, purchaseId, name, oldQuantity, oldUnitPrice, formattedDate, oldTotalPrice) {
+    row.innerHTML = `
+      <td>${formattedDate}</td>
+      <td><input type="string" value="${name}" class="edit-name"></td>
+      <td><input type="number" value="${oldQuantity}" class="edit-quantity"></td>
+      <td><input type="number" value="${oldUnitPrice}" class="edit-unitprice"</td>
+      <td>R$ ${formatPrice(oldTotalPrice)}</td>
+      <td colspan="2">
+        <button class="save-btn">Salvar</button>
+        <button class="cancel-btn">Cancelar</button>
+      </td>
+    `;
+
+    row.querySelector(".save-btn").addEventListener("click", async () => {
+      const updatedName = row.querySelector(".edit-name").value;
+      const updatedQuantity = parseInt(row.querySelector(".edit-quantity").value, 10);
+      const updatedUnitPrice = parseInt(row.querySelector(".edit-unitprice").value, 10);
+
+      try {
+        const response = await fetch("http://localhost:3000/read/stock");
+        if (response.ok) {
+          const stockItems = await response.json();
+          for (const stock of stockItems) {
+            if(stock.purchase.productName === name) {
+              try {
+                const response = await fetch("http://localhost:3000/update/stock", {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ id: stock.id, quantity: updatedQuantity }),
+                });
+              } catch (error) {
+                console.error("Erro ao fazer o update de stock depois do update product:", error);
+              }
+            }
+          }
+        } else {
+          console.error("Erro ao carregar estoque:", await response.json());
+        }
+      } catch (error) {
+        console.error("Erro ao fazer a leitura de stock depois do update product:", error);
+      }
+
+      try {
+        const response = await fetch("http://localhost:3000/update/purchase", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: purchaseId, productName: updatedName, quantity: updatedQuantity, price: updatedUnitPrice }),
+        });
+
+        if (response.ok) {
+          const updatedPurchase = await response.json();
+          const updatedTotalPrice = (updatedPurchase.quantity * updatedPurchase.price).toFixed(2);
+          row.innerHTML = `
+            <td>${formattedDate}</td>
+            <td>${updatedPurchase.productName}</td>
+            <td>${updatedPurchase.quantity}</td>
+            <td>R$ ${formatPrice(updatedPurchase.price)}</td>
+            <td>R$ ${formatPrice(updatedTotalPrice)}</td>
+            <td>
+              <button class="edit-btn">Editar</button>
+            </td>
+          `;
+          row, purchaseId, name, oldQuantity, oldUnitPrice, formattedDate, oldTotalPrice
+          row.querySelector(".edit-btn").addEventListener("click", () => editPurchase(row, purchaseId, updatedPurchase.productName, updatedPurchase.quantity, updatedPurchase.price, formattedDate, updatedTotalPrice));
+        } else {
+          console.error("Erro ao atualizar compra:", await response.json());
+        }
+      } catch (error) {
+        console.error("Erro ao conectar com o servidor:", error);
+      }
+    });
+
+    row.querySelector(".cancel-btn").addEventListener("click", async () => {
+      row.innerHTML = `
+        <td>${formattedDate}</td>
+        <td>${name}</td>
+        <td>${oldQuantity}</td>
+        <td>R$ ${formatPrice(oldUnitPrice)}</td>
+        <td>R$ ${formatPrice(oldTotalPrice)}</td>
+        <td>
+          <button class="edit-btn">Editar</button>
+        </td>
+      `;
+      row.querySelector(".edit-btn").addEventListener("click", () => editPurchase(row, purchaseId, name, oldQuantity, oldUnitPrice, formattedDate, oldTotalPrice));
+    });
   }
 
   function formatPrice(price) {
@@ -176,6 +270,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return await response.json();
+  }
+
+  async function createStock(purchaseId, purchaseQuantity) {
+    try {
+      const response = await fetch("http://localhost:3000/create/stock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ purchaseId, quantity: purchaseQuantity }),
+      });
+    } catch (error) {
+      console.error("Erro ao criar estoque:", await response.json());
+      alert("Erro ao salvar estoque. Tente novamente.");
+    }
   }
 
   async function getPurchasesByDate(year, month, day) {

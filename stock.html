@@ -15,36 +15,21 @@
       <div class="menu-icon" onclick="openSidebar()">
         <span class="material-symbols-outlined">menu</span>
       </div>
-      <div class="header-left">
-        <span class="material-symbols-outlined">search</span>
-      </div>
-      <div class="header-right">
-        <span class="material-symbols-outlined">notifications</span>
-        <span class="material-symbols-outlined">mail</span>
-        <span class="material-symbols-outlined">account_circle</span>
-      </div>
     </header>
     <!-- ---------- END HEADER ---------- -->
-
-
     <!-- ---------- SIDEBAR ---------- -->
     <aside id="sidebar">
       <div class="sidebar-title">
         <div class="sidebar-brand">
-          <span class="material-symbols-outlined">inventory</span> Gab Refrigeramentos
+          <img src="./assets/logo-finstock.png" class="logo" alt="logo finstock">
           <span id="button-close" class="material-symbols-outlined" onclick="closeSidebar()">close</span>
         </div>
       </div>
 
       <ul class="sidebar-list">
         <li class="sidebar-list-item">
-          <a href="dashboard.html">
+          <a href="index.html">
             <span class="material-symbols-outlined">dashboard</span> Painel
-          </a>
-        </li>
-        <li class="sidebar-list-item">
-          <a href="products.html">
-            <span class="material-symbols-outlined">inventory_2</span> Produtos
           </a>
         </li>
         <li class="sidebar-list-item">
@@ -68,8 +53,8 @@
           </a>
         </li>
         <li class="sidebar-list-item">
-          <a href="settings.html">
-            <span class="material-symbols-outlined">settings</span> Configurações
+          <a href="https://rastreamento.correios.com.br/">
+            <span class="material-symbols-outlined">map</span> Rastreio
           </a>
         </li>
       </ul>
@@ -83,20 +68,6 @@
         <p class="font-weight-bold">PRODUTOS</p>
       </div>
 
-      <!-- Formulário de Cadastro no Estoque -->
-      <div class="charts-card">
-        <p class="chart-title">Adicionar Produto ao Estoque</p>
-        <form id="stock-form" class="stock-form">
-          <label for="product-select">Produto:</label>
-          <select id="product-select" name="product" required>
-            <!-- Opções adicionadas dinamicamente -->
-          </select>
-          <label for="product-quantity">Quantidade:</label>
-          <input type="number" id="product-quantity" name="quantity" placeholder="10" min="0" required>
-          <button type="submit" class="btn-primary">Adicionar</button>
-        </form>
-      </div>
-
       <!-- Lista de Produtos no Estoque -->
       <div class="charts-card">
         <p class="chart-title">Estoque atual</p>
@@ -107,7 +78,6 @@
               <th>Valor Unitário</th>
               <th>Quantidade</th>
               <th>Status</th>
-              <th>Ações</th>
             </tr>
           </thead>
           <tbody id="stock-list">

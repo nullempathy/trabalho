@@ -183,6 +183,12 @@ body {
   font-size: 2rem;
 }
 
+.logo {
+  width: 14rem;
+  height: auto;
+  vertical-align: middle;
+}
+
 .card {
   display: flex;
   flex-direction: column;

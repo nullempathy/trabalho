@@ -15,13 +15,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   loadSellsFromTheCurrentMonthAndYear(filterYear.value, filterMonth.value);
   loadPurchasesFromTheCurrentMonthAndYear(filterYear.value, filterMonth.value);
 
-
   // RECEITA BRUTA
   async function calcularReceitaBruta(year, month) {
     const sells = await filterSells(year, month);
     let total = 0;
-    console.log("sells", sells);
-    console.log("sells.length", sells.length);
     for (let i = 0; i < sells.length; i++) {
       // Para cada venda no array, multiplicamos o preço pela quantidade e somamos ao total
       total += Number(sells[i].price) * sells[i].quantity;
@@ -30,7 +27,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const calculoDaReceitaBruta = await calcularReceitaBruta(filterYear.value, filterMonth.value);
-  console.log("calculoDaReceitaBruta", calculoDaReceitaBruta);
   receitaBruta.textContent = `R$ ${calculoDaReceitaBruta.toFixed(2)}`;
 
 
@@ -39,8 +35,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function calcularCustoDosProdutosVendidos(year, month) {
     const purchases = await filterPurchases(year, month);
     let total = 0;
-    console.log("purchases", purchases);
-    console.log("purchases.length", purchases.length);
     for (let i = 0; i < purchases.length; i++) {
       // Para cada compra no array, multiplicamos o preço pela quantidade e somamos ao total
       total += Number(purchases[i].price) * purchases[i].quantity;
@@ -49,7 +43,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const calculoDoCustoDosProdutosVendidos = await calcularCustoDosProdutosVendidos(filterYear.value, filterMonth.value);
-  console.log("calculoDoCustoDosProdutosVendidos", calculoDoCustoDosProdutosVendidos);
   custoDosProdutosVendidos.textContent = `R$ ${calculoDoCustoDosProdutosVendidos.toFixed(2)}`;
 
 
@@ -58,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function calcularLucroBruto(receitaBruta, cpv) {
     return receitaBruta - cpv;
   }
-  const calculoDoLucroBruto = await calcularLucroBruto(calculoDaReceitaBruta, calculoDoCustoDosProdutosVendidos);
+  const calculoDoLucroBruto = calcularLucroBruto(calculoDaReceitaBruta, calculoDoCustoDosProdutosVendidos);
   lucroBruto.textContent = `R$ ${calculoDoLucroBruto.toFixed(2)}`;
 
 
@@ -67,15 +60,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function calcularValorTotalDoEstoque() {
     const stockItems = await getStock();
     let total = 0;
-    console.log("stockItems", stockItems);
-    console.log("stockItems.length", stockItems.length);
     for (let i = 0; i < stockItems.length; i++) {
       // Para cada compra no array, multiplicamos o preço pela quantidade e somamos ao total
-      console.log("Number(stockItems[i].product.price)", Number(stockItems[i].product.price));
-      console.log("stockItems[i].product.quantity", stockItems[i].quantity);
-      total += Number(stockItems[i].product.price) * stockItems[i].quantity;
+      total += Number(stockItems[i].purchase.price) * stockItems[i].quantity;
     }
-    console.log("total", total);
+    console.log("total do calcularValorTotalDoEstoque", total);
     return total;
   }
   const calculoDoValorTotalDoEstoque = await calcularValorTotalDoEstoque();
@@ -131,12 +120,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     filterMonth.value = currentMonth.toString().padStart(2, "0");
   }
 
-  filterButton.addEventListener("click", () => {
+  filterButton.addEventListener("click", async () => {
     const selectedYear = filterYear.value;
     const selectedMonth = filterMonth.value !== "all" ? filterMonth.value : null;
 
-    filterSells(selectedYear, selectedMonth);
-    filterPurchases(selectedYear, selectedMonth);
+    let calculoDaReceitaBruta = await calcularReceitaBruta(selectedYear, selectedMonth);
+    receitaBruta.textContent = `R$ ${calculoDaReceitaBruta.toFixed(2)}`;
+
+    let calculoDoCustoDosProdutosVendidos = await calcularCustoDosProdutosVendidos(selectedYear, selectedMonth);
+    custoDosProdutosVendidos.textContent = `R$ ${calculoDoCustoDosProdutosVendidos.toFixed(2)}`;
+
+    let calculoDoLucroBruto = calcularLucroBruto(calculoDaReceitaBruta, calculoDoCustoDosProdutosVendidos);
+    lucroBruto.textContent = `R$ ${calculoDoLucroBruto.toFixed(2)}`;
+
+    let calculoDoValorTotalDoEstoque = await calcularValorTotalDoEstoque();
+    valorTotalDoEstoque.textContent = `R$ ${calculoDoValorTotalDoEstoque.toFixed(2)}`;
+
   });
 
   // Filtro flexível por Ano/Mês/Dia
@@ -144,10 +143,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const sells = await getSellsByDate(year, month, day);
 
-      console.log("sells", sells);
+      console.log("sells do filterSells", sells);
 
       sells.forEach((sell) => {
-        console.log("sell", sell);
+        console.log("sell do filterSells", sell);
       });
 
       return sells;
@@ -163,11 +162,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const purchases = await getPurchasesByDate(year, month, day);
 
-      console.log("purchases", purchases);
+      console.log("purchases do filterPurchases", purchases);
 
   
       purchases.forEach((purchase) => {
-        console.log("purchase", purchase);
+        console.log("purchase do filterPurchases", purchase);
       });
 
       return purchases;

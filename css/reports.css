@@ -165,6 +165,12 @@ body {
   font-size: 2rem;
 }
 
+.logo {
+  width: 14rem;
+  height: auto;
+  vertical-align: middle;
+}
+
 .filter-container {
   display: flex;
   gap: 1rem;

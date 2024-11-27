@@ -15,14 +15,6 @@
       <div class="menu-icon" onclick="openSidebar()">
         <span class="material-symbols-outlined">menu</span>
       </div>
-      <div class="header-left">
-        <span class="material-symbols-outlined">search</span>
-      </div>
-      <div class="header-right">
-        <span class="material-symbols-outlined">notifications</span>
-        <span class="material-symbols-outlined">mail</span>
-        <span class="material-symbols-outlined">account_circle</span>
-      </div>
     </header>
     <!-- ---------- END HEADER ---------- -->
 
@@ -30,20 +22,15 @@
     <aside id="sidebar">
       <div class="sidebar-title">
         <div class="sidebar-brand">
-          <span class="material-symbols-outlined">inventory</span> Gab Refrigeramentos
+          <img src="./assets/logo-finstock.png" class="logo" alt="logo finstock">
           <span id="button-close" class="material-symbols-outlined" onclick="closeSidebar()">close</span>
         </div>
       </div>
 
       <ul class="sidebar-list">
         <li class="sidebar-list-item">
-          <a href="dashboard.html">
+          <a href="index.html">
             <span class="material-symbols-outlined">dashboard</span> Painel
-          </a>
-        </li>
-        <li class="sidebar-list-item">
-          <a href="products.html">
-            <span class="material-symbols-outlined">inventory_2</span> Produtos
           </a>
         </li>
         <li class="sidebar-list-item">
@@ -67,8 +54,8 @@
           </a>
         </li>
         <li class="sidebar-list-item">
-          <a href="settings.html">
-            <span class="material-symbols-outlined">settings</span> Configurações
+          <a href="https://rastreamento.correios.com.br/">
+            <span class="material-symbols-outlined">map</span> Rastreio
           </a>
         </li>
       </ul>
@@ -118,7 +105,7 @@
           <input type="text" id="purchase-name" name="purchase-name" placeholder="Geladeira" required>
 
           <label for="purchase-quantity">Quantidade:</label>
-          <input type="number" id="purchase-quantity" name="purchase-quantity" min="1" required>
+          <input type="number" id="purchase-quantity" name="purchase-quantity" placeholder="20" min="1" required>
 
           <label for="unit-price">Valor Unitário:</label>
           <input type="text" id="unit-price" name="unit-price" placeholder="R$567,03" required>
@@ -141,6 +128,7 @@
               <th>Quantidade</th>
               <th>Valor Unitário</th>
               <th>Valor Total</th>
+              <th>Ações</th>
             </tr>
           </thead>
           <tbody id="purchase-list">

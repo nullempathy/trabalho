@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterMonth = document.getElementById("filter-month");
   const filterDay = document.getElementById("filter-day");
   const stockSelect = document.getElementById("stock-select");
+  const quantityInput = document.getElementById("sell-quantity");
+  const priceInput = document.getElementById("unit-price");
   const filterButton = document.getElementById("filter-button");
 
   populateYearFilter();
@@ -38,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const sellCreated = await createSell(stockId, quantity, unitPrice, date);
 
       if (filterSellsOngoing(date)) {
-        addSellToList(sellCreated.stock.product.name, quantity, unitPrice, date, totalPrice);
+        addSellToList(sellCreated.stock.purchase.productName, quantity, unitPrice, date, totalPrice);
       }
       form.reset();
     } catch (error) {
@@ -53,13 +55,21 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         const stocks = await response.json();
         stockSelect.innerHTML = ""; // Limpa o select antes de preencher
+        quantityInput.placeholder = stocks[0].quantity;
+        priceInput.placeholder = stocks[0].purchase.price;
         stocks.forEach((stock) => {
           console.log("stock", stock);
+          // Remove o horário da data, mantendo apenas o formato YYYY-MM-DD
+          let [year, month, day] = stock.purchase.purchaseDate.split("T")[0].split("-");
+          let formattedDate = `${day}/${month}/${year}`;
           const option = document.createElement("option");
           option.value = stock.id;
-          option.textContent = stock.product.name;
+          option.textContent = `${stock.purchase.productName} - ${formattedDate}`;
+          option.dataset.quantity = stock.quantity;
+          option.dataset.price = stock.purchase.price;
           stockSelect.appendChild(option);
         });
+
       } else {
         console.error("Erro ao carregar produtos em estoque:", await response.json());
       }
@@ -68,6 +78,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Atualiza o placeholder do campo de quantidade sempre que o usuário mudar a seleção no select
+  stockSelect.addEventListener("change", () => {
+    console.log("mudou?");
+    const selectedOption = stockSelect.selectedOptions[0]; // Obtém a opção selecionada
+    const quantity = selectedOption ? selectedOption.dataset.quantity : 0; // Acessa a quantidade armazenada
+    const price = selectedOption ? selectedOption.dataset.price : 0; // Acessa a quantidade armazenada
+
+    console.log("Quantidade do stock selecionado:", quantity);
+    quantityInput.placeholder = quantity; // Atualiza o placeholder do campo de quantidade
+    priceInput.placeholder = price;
+  });
 
   filterButton.addEventListener("click", () => {
     const selectedYear = filterYear.value;
@@ -114,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Filtro flexível por Ano/Mês/Dia
   async function filterSells(year, month, day) {
     try {
+      console.log("year month day", year, month, day);
       const sells = await getSellsByDate(year, month, day);
       sellList.innerHTML = "";
 
@@ -122,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sells.forEach((sell) => {
         console.log("sell", sell);
         addSellToList(
-          sell.stock.product.name,
+          sell.stock.purchase.productName,
           sell.quantity,
           sell.price,
           sell.sellDate,
@@ -208,7 +230,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ...(month && { month }),
       ...(day && { day }),
     }).toString();
-
+    console.log(`http://127.0.0.1:3000/read/sell?${queryParams}`);
     const response = await fetch(`http://127.0.0.1:3000/read/sell?${queryParams}`, { method: "GET" });
     if (!response.ok) throw new Error("Erro ao buscar vendas.");
     return await response.json();

@@ -164,6 +164,12 @@ body {
   font-size: 2rem;
 }
 
+.logo {
+  width: 14rem;
+  height: auto;
+  vertical-align: middle;
+}
+
 .filter-container {
   display: flex;
   gap: 1rem;
@@ -179,7 +185,7 @@ select {
 
 .main-cards {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 2rem;
   margin: 2rem 0rem;
 }
@@ -201,14 +207,10 @@ select {
 }
 
 .card:nth-child(2) {
-  border-left: 0.7rem solid #f5b74f;
-}
-
-.card:nth-child(3) {
   border-left: 0.7rem solid #367952;
 }
 
-.card:nth-child(4) {
+.card:nth-child(3) {
   border-left: 0.7rem solid #cc3c43;
 }
 
