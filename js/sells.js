@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const stocks = await response.json();
         stockSelect.innerHTML = ""; // Limpa o select antes de preencher
         quantityInput.placeholder = stocks[0].quantity;
-        priceInput.placeholder = stocks[0].purchase.price;
+        priceInput.placeholder = `${formatarMoedaBR(stocks[0].purchase.price)}`;
         stocks.forEach((stock) => {
           console.log("stock", stock);
           // Remove o horário da data, mantendo apenas o formato YYYY-MM-DD
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("Quantidade do stock selecionado:", quantity);
     quantityInput.placeholder = quantity; // Atualiza o placeholder do campo de quantidade
-    priceInput.placeholder = price;
+    priceInput.placeholder = `${formatarMoedaBR(price)}`;
   });
 
   filterButton.addEventListener("click", () => {
