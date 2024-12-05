@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   const lucroBruto = document.getElementById("lucro-bruto");
   const valorTotalDoEstoque = document.getElementById("valor-total-do-estoque");
 
+  // Função para formatar valores no formato brasileiro
+  function formatarMoedaBR(valor) {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(valor);
+  }
 
   populateYearFilter();
   populateMonthFilter();
@@ -27,7 +34,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const calculoDaReceitaBruta = await calcularReceitaBruta(filterYear.value, filterMonth.value);
-  receitaBruta.textContent = `R$ ${calculoDaReceitaBruta.toFixed(2)}`;
+  receitaBruta.textContent = formatarMoedaBR(calculoDaReceitaBruta);
 
 
 
@@ -43,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const calculoDoCustoDosProdutosVendidos = await calcularCustoDosProdutosVendidos(filterYear.value, filterMonth.value);
-  custoDosProdutosVendidos.textContent = `R$ ${calculoDoCustoDosProdutosVendidos.toFixed(2)}`;
+  custoDosProdutosVendidos.textContent = formatarMoedaBR(calculoDoCustoDosProdutosVendidos);
 
 
 
@@ -52,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return receitaBruta - cpv;
   }
   const calculoDoLucroBruto = calcularLucroBruto(calculoDaReceitaBruta, calculoDoCustoDosProdutosVendidos);
-  lucroBruto.textContent = `R$ ${calculoDoLucroBruto.toFixed(2)}`;
+  lucroBruto.textContent = formatarMoedaBR(calculoDoLucroBruto);
 
 
 
@@ -68,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return total;
   }
   const calculoDoValorTotalDoEstoque = await calcularValorTotalDoEstoque();
-  valorTotalDoEstoque.textContent = `R$ ${calculoDoValorTotalDoEstoque.toFixed(2)}`;
+  valorTotalDoEstoque.textContent = formatarMoedaBR(calculoDoValorTotalDoEstoque);
   
 
 
@@ -125,16 +132,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     const selectedMonth = filterMonth.value !== "all" ? filterMonth.value : null;
 
     let calculoDaReceitaBruta = await calcularReceitaBruta(selectedYear, selectedMonth);
-    receitaBruta.textContent = `R$ ${calculoDaReceitaBruta.toFixed(2)}`;
+    receitaBruta.textContent = formatarMoedaBR(calculoDaReceitaBruta);
 
     let calculoDoCustoDosProdutosVendidos = await calcularCustoDosProdutosVendidos(selectedYear, selectedMonth);
-    custoDosProdutosVendidos.textContent = `R$ ${calculoDoCustoDosProdutosVendidos.toFixed(2)}`;
+    custoDosProdutosVendidos.textContent = formatarMoedaBR(calculoDoCustoDosProdutosVendidos);
 
     let calculoDoLucroBruto = calcularLucroBruto(calculoDaReceitaBruta, calculoDoCustoDosProdutosVendidos);
-    lucroBruto.textContent = `R$ ${calculoDoLucroBruto.toFixed(2)}`;
+    lucroBruto.textContent = formatarMoedaBR(calculoDoLucroBruto);
 
     let calculoDoValorTotalDoEstoque = await calcularValorTotalDoEstoque();
-    valorTotalDoEstoque.textContent = `R$ ${calculoDoValorTotalDoEstoque.toFixed(2)}`;
+    valorTotalDoEstoque.textContent = formatarMoedaBR(calculoDoValorTotalDoEstoque);
 
   });
 

@@ -6,6 +6,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const filterDay = document.getElementById("filter-day");
   const filterButton = document.getElementById("filter-button");
 
+  // Função para formatar valores no formato brasileiro
+  function formatarMoedaBR(valor) {
+    // Verifica se o valor é uma string e tenta convertê-lo para float
+    const numero = typeof valor === "string" ? parseFloat(valor) : valor;
+
+    // Se o valor convertido não for um número válido, retorna "R$ 0,00" ou uma mensagem
+    if (isNaN(numero)) {
+      return "R$ 0,00";
+    }
+
+    // Formata o número para o formato brasileiro
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(numero);
+  }
+
   populateYearFilter();
   populateMonthFilter();
   populateDayFilter(filterYear.value, filterMonth.value);
@@ -148,8 +165,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <td>${formattedDate}</td>
       <td>${name}</td>
       <td>${quantity}</td>
-      <td>R$ ${formatPrice(unitPrice)}</td>
-      <td>R$ ${formatPrice(totalPrice)}</td>
+      <td>${formatarMoedaBR(unitPrice)}</td>
+      <td>${formatarMoedaBR(totalPrice)}</td>
       <td>
         <button class="edit-btn">Editar</button>
       </td>
@@ -165,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <td><input type="string" value="${name}" class="edit-name"></td>
       <td><input type="number" value="${oldQuantity}" class="edit-quantity"></td>
       <td><input type="number" value="${oldUnitPrice}" class="edit-unitprice"</td>
-      <td>R$ ${formatPrice(oldTotalPrice)}</td>
+      <td>${formatarMoedaBR(oldTotalPrice)}</td>
       <td colspan="2">
         <button class="save-btn">Salvar</button>
         <button class="cancel-btn">Cancelar</button>
@@ -215,8 +232,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <td>${formattedDate}</td>
             <td>${updatedPurchase.productName}</td>
             <td>${updatedPurchase.quantity}</td>
-            <td>R$ ${formatPrice(updatedPurchase.price)}</td>
-            <td>R$ ${formatPrice(updatedTotalPrice)}</td>
+            <td>${formatarMoedaBR(updatedPurchase.price)}</td>
+            <td>${formatarMoedaBR(updatedTotalPrice)}</td>
             <td>
               <button class="edit-btn">Editar</button>
             </td>
@@ -236,18 +253,14 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>${formattedDate}</td>
         <td>${name}</td>
         <td>${oldQuantity}</td>
-        <td>R$ ${formatPrice(oldUnitPrice)}</td>
-        <td>R$ ${formatPrice(oldTotalPrice)}</td>
+        <td>${formatarMoedaBR(oldUnitPrice)}</td>
+        <td>${formatarMoedaBR(oldTotalPrice)}</td>
         <td>
           <button class="edit-btn">Editar</button>
         </td>
       `;
       row.querySelector(".edit-btn").addEventListener("click", () => editPurchase(row, purchaseId, name, oldQuantity, oldUnitPrice, formattedDate, oldTotalPrice));
     });
-  }
-
-  function formatPrice(price) {
-    return parseFloat(price).toFixed(2).replace('.', ',');
   }
 
   // API Functions
@@ -302,10 +315,22 @@ document.addEventListener("DOMContentLoaded", () => {
 // Formatação ao digitar o valor unitário
 document.getElementById('unit-price').addEventListener('input', function(e) {
   let value = e.target.value;
+
+  // Remove qualquer coisa que não seja dígito ou vírgula
   value = value.replace(/[^\d,]/g, '');
-  value = 'R$' + value;
-  e.target.value = value;
+
+  // Substitui vírgulas extras e formata corretamente
+  if (value.includes(',')) {
+    const parts = value.split(',');
+    value = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + parts[1].slice(0, 2); // Milhares + até 2 casas decimais
+  } else {
+    value = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Apenas separador de milhares
+  }
+
+  // Adiciona o prefixo "R$"
+  e.target.value = 'R$ ' + value;
 });
+
 
 
 // SIDEBAR TOGGLE

@@ -1,3 +1,20 @@
+  // Função para formatar valores no formato brasileiro
+  function formatarMoedaBR(valor) {
+    // Verifica se o valor é uma string e tenta convertê-lo para float
+    const numero = typeof valor === "string" ? parseFloat(valor) : valor;
+
+    // Se o valor convertido não for um número válido, retorna "R$ 0,00" ou uma mensagem
+    if (isNaN(numero)) {
+      return "R$ 0,00";
+    }
+
+    // Formata o número para o formato brasileiro
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL"
+    }).format(numero);
+  }
+
 document.addEventListener("DOMContentLoaded", () => {
   const stockList = document.getElementById("stock-list");
 
@@ -27,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     row.innerHTML = `
       <td>${productName}</td>
-      <td>R$ ${formatPrice(productPrice)}</td>
+      <td>${formatarMoedaBR(productPrice)}</td>
       <td>${quantity}</td>
       <td>${getProductStatus(quantity)}</td>
     `;
@@ -41,9 +58,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (quantity <= 0) return `<span class="status out-of-stock font-weight-bold">Esgotado</span>`;
   }
 
-  function formatPrice(price) {
-    return parseFloat(price).toFixed(2).replace('.', ',');
-  }
 });
 
 // SIDEBAR TOGGLE
